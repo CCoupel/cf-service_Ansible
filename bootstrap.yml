@@ -14,7 +14,7 @@
             with_items:
             - "{{ ansible_inventory }}"
 
-          - name: make groups
+          - name: make inventory
             add_host: 
               name: "{{ item.0 }}"
               group: "{{ item.1 }}"
@@ -26,7 +26,7 @@
               debug: 
               msg: "{{ groups }}"
 
-- name: bootstrap Grooups
+- name: bootstrap Groups
   hosts: 127.0.0.1
   connection: local
   gather_facts: false
