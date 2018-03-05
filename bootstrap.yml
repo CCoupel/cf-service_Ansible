@@ -1,27 +1,51 @@
 ---
-- name: bootstrap
+- name: bootstrap VMs
   hosts: 127.0.0.1
   connection: local
   gather_facts: false
   tasks:
           - name: debug vars
             debug: 
-              msg: "{{ ansible_groups }}"
+              msg: "inventory={{ ansible_inventory }}"
           
           - name: test
             debug: 
-              msg: "item.0={{ item.0.ip }} item.1={{ item.1 }}"
-            with_subelements:
-            - "{{ ansible_groups }}"
-            - groups
+              msg: "item.0={{ item.0 }} item.1={{ item.1 }} item.2={{ item.2 }}"
+            with_items:
+            - "{{ ansible_inventory }}"
 
           - name: make groups
             add_host: 
-              name: "{{ item.0.ip }}"
+              name: "{{ item.0 }}"
               group: "{{ item.1 }}"
-            with_subelements:
-            - "{{ ansible_groups }}"
-            - groups
+            with_items:
+            - "{{ ansible_inventory }}"
+
+            - name: debug groups
+              debug: 
+              msg: "{{ groups }}"
+
+- name: bootstrap Grooups
+  hosts: 127.0.0.1
+  connection: local
+  gather_facts: false
+  tasks:
+          - name: debug vars
+            debug: 
+              msg: "groups={{ ansible_groups }}"
+          
+          - name: test
+            debug: 
+              msg: "item.0={{ item.0 }} item.1={{ item.1 }}"
+            with_items:
+            - "{{ ansible_inventory }}"
+
+          - name: make groups
+            group_by: 
+              key: "{{ item.0 }}"
+              parent: "{{ item.1 }}"
+            with_items:
+            - "{{ ansible_inventory }}"
 
             - name: debug groups
               debug: 
