@@ -10,15 +10,15 @@
           
           - name: test
             debug: 
-              msg: "name={{ item[0] }} groupe={{ item[1] }} ip={{ item[2] }}"
+              msg: "name={{ item.0 }} groupe={{ item.1 }} ip={{ item.2 }}"
             with_items:
             - "{{ ansible_inventory }}"
 
           - name: make inventory
             add_host: 
-              name: "{{ item[0]|default("tata") }}"
-              group: "{{ item[1]|default("titi") }}"
-              ansible_ssh_host: "{{ item[2]|default("toto") }}"
+              name: "{{ item.0 }}"
+              group: "{{ item.1 }}"
+              ansible_ssh_host: "{{ item.2 }}"
             with_items:
             - "{{ ansible_inventory }}"
 
