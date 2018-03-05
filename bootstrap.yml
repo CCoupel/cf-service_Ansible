@@ -10,7 +10,7 @@
           
           - name: test
             debug: 
-              msg: "item={{ item }}"
+              msg: "item={{ item.0 }}"
             with_items:
             - "{{ ansible_inventory }}"
 
@@ -18,7 +18,7 @@
             add_host: 
               name: "{{ item.0 }}"
               group: "{{ item.1 }}"
-              #ansible_ssh_host: "{{ item.2 }}"
+              ansible_ssh_host: "{{ item.2 }}"
             with_items:
             - "{{ ansible_inventory }}"
 
