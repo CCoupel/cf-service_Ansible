@@ -10,7 +10,7 @@
           
           - name: test
             debug: 
-              msg: "item={{ item.0 }}"
+              msg: "item={{ item[0] }}"
             with_items:
             - "{{ ansible_inventory }}"
 
