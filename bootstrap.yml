@@ -6,7 +6,7 @@
   tasks:
           - name: debug vars
             debug: 
-              msg: "inventory={{ ansible_inventory }}"
+              msg: "inventory={{ hostvars }}"
           
           - name: test
             debug: 
