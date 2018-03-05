@@ -16,14 +16,14 @@
 
           - name: make inventory
             add_host: 
-              name: "{{ item[0] }}"
-              group: "{{ item[1] }}"
-              ansible_ssh_host: "{{ item[2] }}"
+              name: "{{ item[0]|default("tata") }}"
+              group: "{{ item[1]|default("titi") }}"
+              ansible_ssh_host: "{{ item[2]|default("toto") }}"
             with_items:
             - "{{ ansible_inventory }}"
 
-            - name: debug groups
-              debug: 
+          - name: debug groups
+            debug: 
               msg: "{{ groups }}"
 
 - name: bootstrap Groups
@@ -48,6 +48,6 @@
             with_items:
             - "{{ ansible_inventory }}"
 
-            - name: debug groups
-              debug: 
+          - name: debug groups
+            debug: 
               msg: "{{ groups }}"
