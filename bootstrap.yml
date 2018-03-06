@@ -4,16 +4,6 @@
   connection: local
   gather_facts: false
   tasks:
-          - name: debug vars
-            debug: 
-              msg: "ansible_inventory={{ ansible_inventory }} ansible_groups={{ ansible_groups }} test_var={{ test_var }}"
-          
-          - name: test
-            debug: 
-              msg: "name={{ item.0 }} groupe={{ item.1 }} ip={{ item.2 }}"
-            with_items:
-            - "{{ ansible_inventory }}"
-
           - name: make inventory
             add_host: 
               name: "{{ item.0 }}"
@@ -22,6 +12,3 @@
             with_items:
             - "{{ ansible_inventory }}"
 
-          - name: debug groups
-            debug: 
-              msg: "{{ groups }}"
