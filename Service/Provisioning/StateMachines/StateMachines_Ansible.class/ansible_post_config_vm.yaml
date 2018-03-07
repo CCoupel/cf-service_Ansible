@@ -9,7 +9,7 @@ object:
     description: 
   fields:
   - Ansible1:
-      value: "/Service/Provisioning/StateMachines/StateMachines_Ansible/Ansible_Bootstrap"
+      value: "/Service/Provisioning/StateMachines/Ansible_Bootstrap/Ansible_Bootstrap"
   - Ansible2:
       value: "/Service/Provisioning/StateMachines/Wrapper_Ansible/call_Ansible_Post_config_VM"
   - Ansible3:

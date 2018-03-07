@@ -4,7 +4,7 @@ version: 1.0
 object:
   attributes:
     name: cf-service_Ansible
-    description: 
+    description: COVEA_LE_Mans
     display_name: 
     priority: 11
     enabled: true

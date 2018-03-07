@@ -3,7 +3,7 @@ object_type: method
 version: 1.0
 object:
   attributes:
-    name: Ansible_Grouping
+    name: Ansible_Inventory_Groups
     display_name: 
     description: 
     scope: instance

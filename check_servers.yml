@@ -1,0 +1,120 @@
+---
+# set groups based on power status (Power_True and Power_False)
+- name: wait for Linux server to be up
+  hosts: all
+  gather_facts: no
+  connection: local
+  strategy: linear
+  vars:
+    max_retry: 1
+    delay: 1
+    _ansible_connection: ssh
+    _ansible_user: root
+    _ansible_password: Tanuki34
+    _ansible_port: 22
+
+  tasks:
+  - name: test Linux inventory
+    wait_for:
+      port: 22
+      state: present
+      host: "{{ inventory_hostname }}"
+      search_regex: OpenSSH
+      connect_timeout: 2
+      timeout: 5
+    register: linux_is_reachable
+    until:
+      "linux_is_reachable.failed is not defined"
+    retries: "{{ max_retry }}"
+    delay: "{{ delay }}"
+    ignore_errors: yes
+
+  - meta: clear_host_errors
+
+  - name: Linux PING
+    ping:
+    delegate_to: "{{ inventory_hostname }}"
+    register: linux_is_pinggable
+    ignore_errors: yes
+    when: linux_is_reachable|succeeded
+
+  #- debug: msg="linux_is_pinggable=(succedded={{linux_is_pinggable|succeeded}} skipped={{linux_is_pinggable|skipped}} failled={{linux_is_pinggable|failed}}){{ linux_is_pinggable }}"
+
+  - name: set linux POWER group
+    #group_by:
+      #key: "Linux_Power_{{ linux_is_pinggable|succeeded }}"
+    add_host:
+      name: "{{ inventory_hostname }}"
+      group: "Linux_Power_{{ linux_is_pinggable|succeeded }}"
+      ansible_connection: "{{ _ansible_connection }}"
+      ansible_user: "{{ _ansible_user }}"
+      ansible_password: "{{ _ansible_password }}"
+      ansible_port: "{{ _ansible_port }}"
+    when: (not linux_is_pinggable|failed) and linux_is_pinggable|succeeded and not linux_is_pinggable|skipped
+
+  - meta: clear_host_errors
+
+  - name: groupe
+    debug: "msg={{ groups }}"
+
+  - meta: clear_host_errors
+
+
+- name: wait for Windows server to be up
+  hosts: all,!Linux_Power_True
+  gather_facts: no
+  connection: local
+  strategy: linear
+  vars:
+    max_retry: 1
+    delay: 1
+    _ansible_connection: winrm
+    _ansible_user: Admbuildg2s
+    _ansible_password: Azerty123
+    _ansible_port: 5986
+    _ansible_winrm_server_cert_validation: ignore
+
+  tasks:
+  - name: test windows inventory
+    wait_for:
+      port: 5985
+      state: present
+      host: "{{ inventory_hostname }}"
+      #search_regex: Microsoft-HTTPAPI
+      connect_timeout: 2
+      timeout: 5
+    register: windows_is_reachable
+    until:
+      "windows_is_reachable.failed is not defined"
+    retries: "{{ max_retry }}"
+    delay: "{{ delay }}"
+    ignore_errors: yes
+    #when: linux_is_pinggable|failed or linux_is_reachable|failed
+
+  - meta: clear_host_errors
+
+  #- debug: msg="windows_is_reachable={{ windows_is_reachable }}"
+  - name: set windows POWER group
+    #group_by:
+      #key: "Windows_Power_{{ windows_is_reachable|succeeded }}"
+    add_host:
+      name: "{{ inventory_hostname }}"
+      group: "Windows_Power_{{ windows_is_reachable|succeeded }}"
+      ansible_connection: "{{ _ansible_connection }}"
+      ansible_user: "{{ _ansible_user }}"
+      ansible_password: "{{ _ansible_password }}"
+      ansible_port: "{{ _ansible_port }}"
+      ansible_winrm_server_cert_validation: "{{ _ansible_winrm_server_cert_validation }}"
+    when: windows_is_reachable|succeeded and not windows_is_reachable|skipped
+
+  - meta: clear_host_errors
+
+- name: show groups
+  hosts: all
+  gather_facts: no
+  connection: local
+  strategy: linear
+  tasks:
+  - name: groups
+    debug: "msg={{ groups }}"
+

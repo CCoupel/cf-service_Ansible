@@ -4,9 +4,7 @@ version: 1.0
 object:
   attributes:
     display_name: 
-    name: Ansible_Grouping
+    name: ".missing"
     inherits: 
     description: 
-  fields:
-  - execute:
-      value: Ansible_Grouping
+  fields: []

@@ -7,18 +7,21 @@ def setup_catalog_item_options(dialog_options,template,svc,vms)
   vm=vms.first rescue vms
   $evm.object.attributes.each { |k,v| $evm.log(:info,"  CC- object[#{k}]=#{v.inspect}") }
   $evm.root.attributes.each { |k,v| $evm.log(:info,"  CC- root[#{k}]=#{v.inspect}") }
+  dialog_options.each { |k,v| $evm.log(:info,"  CC- dialog[#{k}]=#{v.inspect}") }
   #we look for all extravar declared in the catalogitem and evaluate the value from the instance
   extra_vars=template[:options][:config_info][:provision][:extra_vars]
   extra_vars.each { |var,param|
-    $evm.log(:info,"CC- evaluating '#{var}' object=>'#{$evm.object[param.to_s].inspect}' root=>'#{$evm.root[param.to_s].inspect}' from param='#{param[:default]}'")
-    obj_var=$evm.object[param[:default].to_s]||$evm.root[param[:default].to_s] rescue nil 
+    obj_var=dialog_options[var.to_s].to_s||$evm.object[param[:default].to_s].to_s||$evm.root[param[:default].to_s].to_s rescue nil 
+    $evm.log(:info,"CC- evaluating '#{var}' as from '#{param[:default]}' = #{obj_var}")
+    $evm.log(:info,"    CC- dialog=>'#{dialog_options[var.to_s]}' object=>'#{$evm.object[param[:default].to_s].inspect}' root=>'#{$evm.root[param[:default].to_s].inspect}'")
+
     unless obj_var.nil?
       dialog_var=eval(obj_var) rescue nil 
-      $evm.log(:info,"\tCC- evaluating '#{obj_var}'='#{dialog_var}'")
-      dialog_options["param_#{var}"]=dialog_var unless dialog_var.nil?
-      dialog_options[var]=dialog_var unless dialog_var.nil?
+      $evm.log(:info,"\tCC- evaluating '#{obj_var}'(#{obj_var.class})='#{dialog_var}'")
+      dialog_options["param_#{var.to_s}"]=dialog_var.to_s unless dialog_var.nil?
+      dialog_options[var.to_s]=dialog_var.to_s unless dialog_var.nil?
     end
-    $evm.log(:info,"  CC- evaluated #{obj_var} to #{dialog_var}")
+    $evm.log(:info,"  CC- evaluated #{obj_var} to #{dialog_var.to_s}")
   }
 #  dialog_options["hosts"]=svc.options[:dialog]["hosts"]
 #  dialog_options["ansible_groups"]=svc.options[:dialog]["ansible_groups"]

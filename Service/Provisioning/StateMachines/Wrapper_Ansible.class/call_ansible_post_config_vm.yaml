@@ -11,6 +11,6 @@ object:
   - catalogItem:
       value: CC-ansible-bootstrap
   - extravar1:
-      value: test
+      value: "'test'"
   - execute:
       value: call_Ansible_Item
