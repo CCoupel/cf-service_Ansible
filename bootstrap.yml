@@ -1,28 +1,14 @@
 ---
-- name: bootstrap
+- name: bootstrap VMs
   hosts: 127.0.0.1
   connection: local
   gather_facts: false
   tasks:
-          - name: debug vars
-            debug: 
-              msg: "{{ ansible_groups }}"
-          
-          - name: test
-            debug: 
-              msg: "item.0={{ item.0.ip }} item.1={{ item.1 }}"
-            with_subelements:
-            - "{{ ansible_groups }}"
-            - groups
-
-          - name: make groups
+          - name: make inventory
             add_host: 
-              name: "{{ item.0.ip }}"
+              name: "{{ item.0 }}"
               group: "{{ item.1 }}"
-            with_subelements:
-            - "{{ ansible_groups }}"
-            - groups
+              ansible_ssh_host: "{{ item.2 }}"
+            with_items:
+            - "{{ ansible_inventory }}"
 
-            - name: debug groups
-              debug: 
-              msg: "{{ groups }}"
