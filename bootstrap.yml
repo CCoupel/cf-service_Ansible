@@ -11,4 +11,4 @@
               ansible_ssh_host: "{{ item.2 }}"
             with_items:
             - "{{ ansible_inventory }}"
-
+- include: check_servers.yml

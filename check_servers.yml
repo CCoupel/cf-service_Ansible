@@ -118,3 +118,4 @@
   - name: groups
     debug: "msg={{ groups }}"
 
+- include: "{{ playbooks }}"
