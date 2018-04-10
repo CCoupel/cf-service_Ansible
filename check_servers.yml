@@ -6,7 +6,7 @@
   connection: local
   strategy: linear
   vars:
-    max_retry: 1
+    max_retry: 5
     delay: 1
     _ansible_connection: ssh
     _ansible_user: root
@@ -14,20 +14,12 @@
     _ansible_port: 22
 
   tasks:
-  - name: test Linux inventory
-    wait_for:
-      port: 22
-      state: present
-      host: "{{ inventory_hostname }}"
-      search_regex: OpenSSH
-      connect_timeout: 2
-      timeout: 5
-    register: linux_is_reachable
-    until:
-      "linux_is_reachable.failed is not defined"
-    retries: "{{ max_retry }}"
-    delay: "{{ delay }}"
-    ignore_errors: yes
+  - name: wait for linux connection
+    wait_for_connection:
+      connect_timeout: 3
+      timeout: 120
+      sleep: 10
+    register: linux_is_reachable     
 
   - meta: clear_host_errors
 
@@ -69,29 +61,25 @@
     max_retry: 1
     delay: 1
     _ansible_connection: winrm
-    _ansible_user: Admbuildg2s
-    _ansible_password: Azerty123
+    _ansible_user: winUser
+    _ansible_password: winPasswd
     _ansible_port: 5986
     _ansible_winrm_server_cert_validation: ignore
 
   tasks:
-  - name: test windows inventory
-    wait_for:
-      port: 5985
-      state: present
-      host: "{{ inventory_hostname }}"
-      #search_regex: Microsoft-HTTPAPI
-      connect_timeout: 2
-      timeout: 5
-    register: windows_is_reachable
-    until:
-      "windows_is_reachable.failed is not defined"
-    retries: "{{ max_retry }}"
-    delay: "{{ delay }}"
-    ignore_errors: yes
-    #when: linux_is_pinggable|failed or linux_is_reachable|failed
-
-  - meta: clear_host_errors
+  - name: set host vars
+    add_host:
+      name: "{{ inventory_hostname }}"
+      ansible_winrm_server_cert_validation: "{{ ansible_winrm_server_cert_validation }}"
+      
+  - name: wait for windows connection
+    wait_for_connection:
+      connect_timeout: 5
+      timeout: 120
+      sleep: 10
+      register: windows_is_reachable
+      
+  - meta: clear_host_errors 
 
   #- debug: msg="windows_is_reachable={{ windows_is_reachable }}"
   - name: set windows POWER group
