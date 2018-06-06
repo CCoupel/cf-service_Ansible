@@ -10,7 +10,7 @@
     delay: 1
     _ansible_connection: ssh
     _ansible_user: root
-    _ansible_password: Tanuki34
+    _ansible_password: XXXX
     _ansible_port: 22
 
   tasks:
