@@ -1,14 +1,23 @@
 ---
-- name: bootstrap VMs
+#ansible_inventory = [
+#  {
+#    hostname: 'vm_6be78a3f',
+#    group_name: 'frontend',
+#    ipaddr: '10.0.0.5'
+#  },
+#  ...
+#]
+
+- name: Build in-memory inventory
   hosts: 127.0.0.1
   connection: local
   gather_facts: false
   tasks:
-          - name: make inventory
-            add_host: 
-              name: "{{ item.0 }}"
-              group: "{{ item.1 }}"
-              ansible_ssh_host: "{{ item.2 }}"
-            with_items:
-            - "{{ ansible_inventory }}"
+    - name: Add host to inventory
+      add_host:
+        name: "{{ item.hostname }}"
+        group: "{{ item.groupname }}"
+        ansible_ssh_host: "{{ item.ipaddr }}"
+      with_items: "{{ ansible_inventory }}"
+
 - include: check_servers.yml
